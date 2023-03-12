@@ -1,9 +1,11 @@
 import React from 'react'
-
-function About() {
+import {useContext} from 'react'
+import { AppContext } from '../AppContext'
+function About(props) {
+  const {state}=useContext(AppContext)
   return (
     <div>
-      <h1>About me</h1>
+      <h1>About me {state}</h1>
     </div>
   )
 }
