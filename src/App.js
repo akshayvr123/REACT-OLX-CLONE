@@ -1,36 +1,42 @@
 import React from 'react';
+import { Firebase } from './firebase/config';
 import { useState } from 'react';
-import About from './Container/About';
-import Profile from './Container/Profile';
-import NotFound from './Container/NotFound';
-import { AppContext } from './AppContext';
-import {
-  Route,Routes,Link, useNavigate
-} from "react-router-dom";
+
 
 function App() {
-  const state=10;
-  const navigate = useNavigate();
+  const [email,setEmail]=useState('')
+  const [password,setPassword]=useState('')
   return (
     <div className="app">
-      <button onClick={() => navigate('/about')}>Click</button>
-      <ul>
-        <li> <Link to='/about'>Home</Link> </li>
-        <li> <Link to='/profile'>Profile</Link> </li>
-       
-      </ul>
-      <AppContext.Provider value={{state}}>
-         <Routes>
+      <form>
+        <label htmlFor="">Email</label>
+        <input  onChange={(event) =>
+          setEmail(event.target.value)} type="email" />
+        <label htmlFor="">Password</label>
+        <input  onChange={(event) =>
+          setPassword(event.target.value)}  type="password" />
+      </form>
+     <button onClick={()=>{
+
+Firebase.auth().createUserWithEmailAndPassword(email,password)
+.then((userCredential) => {
+  // Signed Up
+  var user = userCredential.user;
+  
+  Firebase.firestore().collection('Products').get().then((snap)=>{
+       console.log(snap)
+  })
+  // ...
+})
+.catch((error) => {
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  console.log(errorCode)
+  console.log(errorMessage)
+});
+
            
-            <Route path 
-           ='/about' element={<About></About>}></Route>
-             <Route path 
-            ='/profile' element={<Profile ></Profile>}></Route>
-         <Route path 
-            ='*' element={<NotFound></NotFound>}></Route>
-            
-         </Routes>
-         </AppContext.Provider>
+     }}>Click</button>
          
     </div>
   );
