@@ -1,43 +1,48 @@
-import React from 'react';
-import { Firebase } from './firebase/config';
-import { useState } from 'react';
+import React,{useEffect,useContext} from 'react';
+import './App.css';
+import {
+  Route,Routes,Link, useNavigate
+} from "react-router-dom";
+import Signup from './Pages/Signup'
+import Home from './Pages/Home';
+import Login from './Pages/Login'
+import Create from './Components/Create/Create';
+import { AuthContext, FirebaseContext } from './store/FirebaseContext';
+import ViewPost from './Pages/ViewPost';
+import Posts from './store/ProductContext';
+import Post from './store/PostContext'
+import Postss from './store/ProductssContext';
+import Profile from './Components/Profile/Profile'
 
 
 function App() {
-  const [email,setEmail]=useState('')
-  const [password,setPassword]=useState('')
-  return (
-    <div className="app">
-      <form>
-        <label htmlFor="">Email</label>
-        <input  onChange={(event) =>
-          setEmail(event.target.value)} type="email" />
-        <label htmlFor="">Password</label>
-        <input  onChange={(event) =>
-          setPassword(event.target.value)}  type="password" />
-      </form>
-     <button onClick={()=>{
-
-Firebase.auth().createUserWithEmailAndPassword(email,password)
-.then((userCredential) => {
-  // Signed Up
-  var user = userCredential.user;
   
-  Firebase.firestore().collection('Products').get().then((snap)=>{
-       console.log(snap)
+  const {setUser}=useContext(AuthContext)
+  const {firebase}=useContext(FirebaseContext)
+  useEffect(()=>{
+    firebase.auth().onAuthStateChanged((user)=>{
+      setUser(user)
+    })
   })
-  // ...
-})
-.catch((error) => {
-  var errorCode = error.code;
-  var errorMessage = error.message;
-  console.log(errorCode)
-  console.log(errorMessage)
-});
 
-           
-     }}>Click</button>
-         
+  return (
+    <div>
+      <Postss>
+      <Posts>
+      <Post>
+     
+        <Routes> 
+            <Route path ='/' element={<Home></Home>}></Route>
+            <Route path='/signup' element={<Signup></Signup>}></Route>
+            <Route path='/login' element={<Login></Login>}></Route>
+            <Route path='/create' element={<Create></Create>}></Route>
+            <Route path='/view' element={<ViewPost></ViewPost>}></Route>
+            <Route path='/profile' element={<Profile></Profile>}></Route>
+       
+        </Routes>
+        </Post>
+        </Posts>
+        </Postss>
     </div>
   );
 }
